@@ -1,0 +1,7 @@
+transcripts/
+extract/
+verified/
+graph.json
+stats.json
+sources_meta.json
+__pycache__/
