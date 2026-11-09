@@ -14,7 +14,7 @@ A knowledge graph and Claude Code skill built from the public teaching of a busi
 
 ## What this repo does not contain
 
-No transcripts, no quotes, no concept definitions and no graph. The speaker's videos are copyrighted. Build your own from transcripts you are allowed to use.
+No transcripts in the tooling. The speaker's videos are copyrighted, so build your own graph from transcripts you are allowed to use. The `docs/` folder is the public website at https://akshaymenon.qd.je: machine-written summaries plus short quotes, each attributed and linked to its video.
 
 ## Build your own graph
 
@@ -34,4 +34,4 @@ Quotes are checked word for word against the transcript, but definitions are par
 
 ## Licence
 
-Code: MIT (see `LICENSE`). Your transcripts and any text generated from them are subject to the rights of their owners.
+Code: MIT (see `LICENSE`). The MIT license does not cover the quotes in `docs/`, which belong to their speakers. Your transcripts and any text generated from them are subject to the rights of their owners.

@@ -1,0 +1,31 @@
+# OpenHormozi
+
+> Map of the business concepts Alex Hormozi teaches, built from 1,058 public videos. 1,434 concepts, each with a short summary, verified quotes and timestamped video links. Unofficial, not affiliated with or endorsed by Alex Hormozi.
+
+No sign-in or API key. Everything here is static files. Fetch them relative to this file's URL.
+
+## How to use
+
+- Start with the topic file closest to the question. Each is plain Markdown, most-cited concepts first.
+- For lookups or filtering, load concepts.json: {meta, concepts:[{id, name, topic, type, source_count, summary, related, quotes:[{text, video_title, timestamp, url}]}]}.
+- When you use a quote, keep its attribution and video link.
+
+## Accuracy
+
+- Summaries are machine-written paraphrases. Only text under `quotes` is his words.
+- Quotes were matched word for word against YouTube auto-captions, so numbers and names can be garbled. Check the timestamp before relying on one.
+
+## Data
+
+- [concepts.json](concepts.json): all 1,434 concepts as JSON
+
+## Topics
+
+- [Leads & Marketing](topics/leads-marketing.md): 292 concepts. Top: Paid Ads, Personal Brand, Post Free Content, Content Strategy, Cold Outreach
+- [Mindset & Self](topics/mindset-self.md): 231 concepts. Top: Identity, Discipline, Self-Worth, Infinite Game, Limiting Beliefs
+- [Money & Unit Economics](topics/money-unit-economics.md): 133 concepts. Top: Upsell Offer, Money Models, LTV to CAC, Continuity Offer, Cash Flow
+- [Offers](topics/offers.md): 225 concepts. Top: Pricing, Niche and Market Selection, Value Equation, Effort and Sacrifice, Guarantees
+- [People & Operations](topics/people-operations.md): 121 concepts. Top: Hiring, Delegation, Culture, Management, Systems and SOPs
+- [Sales](topics/sales.md): 136 concepts. Top: Sales Process, CLOSER Framework, Ignorance Debt, Sell the Vacation, Sales to Fulfillment Continuum
+- [Scaling & Strategy](topics/scaling-strategy.md): 237 concepts. Top: Leverage, Constraint Theory, Acquisitions, Volume Negates Luck, Scaling Roadmap
+- [Wealth & Investing](topics/wealth-investing.md): 59 concepts. Top: Wealth Building, Ignorance Tax, Time Horizon, Invest In Yourself, Learning as Behavior Change
