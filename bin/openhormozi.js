@@ -116,7 +116,7 @@ async function mcp() {
   if (cmd === 'skill') return installSkill(flags);
   if (cmd === 'agent') return installAgent(flags);
   if (cmd === 'mcp') return mcp();
-  if (cmd === 'prompt') return console.log(`Read ${BASE}/setup.md and follow it to set up a Hormozi business agent for me.`);
+  if (cmd === 'prompt') return console.log(`Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.`);
   if (cmd === 'search') {
     if (!args.length) { console.error('usage: openhormozi search <term>'); process.exit(1); }
     const r = find(await data(), args.join(' ')); return console.log(r.length ? r.map((c) => fmt(c)).join('\n\n') : 'No match.');

@@ -13,6 +13,3 @@
 /skill/*
   Access-Control-Allow-Origin: *
   Content-Type: text/markdown; charset=utf-8
-/setup.md
-  Access-Control-Allow-Origin: *
-  Content-Type: text/markdown; charset=utf-8

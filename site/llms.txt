@@ -17,7 +17,7 @@ No sign-in or API key. Everything here is static files. Fetch them relative to t
 
 ## Install
 
-- Paste into any AI assistant: `Read https://www.akshaymenon.qd.je/setup.md and follow it to set up a Hormozi business agent for me.`
+- Paste into any AI assistant: `Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.`
 - Claude Code plugin: `/plugin marketplace add zqxuii/OpenHormozi` then `/plugin install open-hormozi --marketplace zqxuii/OpenHormozi`
 - npx: `npx openhormozi skill`, `npx openhormozi agent`, `npx openhormozi search <term>`
 - MCP: `claude mcp add openhormozi -- npx -y openhormozi mcp`

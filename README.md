@@ -15,7 +15,7 @@ Pick one. Each takes one line.
 Works in Claude, Codex, Cursor, ChatGPT, anything that can read a link. The assistant installs the right files for where it is running, then interviews you and builds your business agent.
 
 ```
-Read https://www.akshaymenon.qd.je/setup.md and follow it to set up a Hormozi business agent for me.
+Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.
 ```
 
 ### 2. Claude Code plugin (marketplace)
@@ -77,7 +77,7 @@ Summaries are machine-written paraphrases. Only text under `quotes` is his words
 
 ## Repo layout
 
-- `site/`: the public website and agent files (deployed to Cloudflare Pages). `site/skill/SKILL.md`, `site/agent.md` and `site/setup.md` are the source of truth.
+- `site/`: the public website and agent files (deployed to Cloudflare Pages). `site/skill/SKILL.md` and `site/agent.md` are the source of truth. `SETUP.md` (repo root) is the paste-a-prompt setup guide.
 - `bin/openhormozi.js`: the zero-dependency CLI and MCP server. `npm run prepack` copies the site files into `assets/`.
 - `.claude-plugin/` and `plugins/open-hormozi/`: the Claude Code marketplace and plugin.
 - `EXTRACT_PROMPT.md`, `verify.py`, `build_graph.py`, `query.py`, `SKILL.md`: the pipeline that builds the map from transcripts.
