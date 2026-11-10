@@ -13,3 +13,8 @@
 /skill/*
   Access-Control-Allow-Origin: *
   Content-Type: text/markdown; charset=utf-8
+/brain/*
+  Access-Control-Allow-Origin: *
+  Content-Type: text/markdown; charset=utf-8
+/brain/names.txt
+  Content-Type: text/plain; charset=utf-8

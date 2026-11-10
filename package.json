@@ -1,7 +1,7 @@
 {
   "name": "openhormozi",
-  "version": "0.3.1",
-  "description": "Give your AI the Hormozi brain: a skill, an agent and a live brain board. A sourced map of Alex Hormozi's public teaching. Unofficial.",
+  "version": "0.4.0",
+  "description": "Give your AI agent the Hormozi brain: a sourced wiki of Alex Hormozi's public teaching, plus a live brain board. Unofficial.",
   "bin": {
     "openhormozi": "bin/openhormozi.js"
   },

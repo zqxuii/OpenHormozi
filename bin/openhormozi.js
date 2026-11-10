@@ -11,14 +11,14 @@ const TOPICS = ['offers', 'leads-marketing', 'sales', 'money-unit-economics', 'p
 const HELP = `openhormozi: the Hormozi brain for your AI
 
   npx openhormozi skill            install the /open-hormozi skill for Claude Code
-  npx openhormozi agent            add the business agent to this project (Claude Code or AGENTS.md)
+  npx openhormozi brain            give this project's agent the brain (adds a section to CLAUDE.md or AGENTS.md)
   npx openhormozi live             get your private brain board link and watch your agent use the brain live
   npx openhormozi search <term>    look up concepts with quotes and video links
   npx openhormozi topic <name>     print a whole topic (${TOPICS.join(', ')})
   npx openhormozi use <concept>... record the concepts an answer used (lights up the board)
   npx openhormozi prompt           print the setup prompt for any AI assistant
 
-Options: --project (skill in ./.claude)  --codex (agent: write AGENTS.md)  --force (overwrite)  --local (board on this machine only)  --off (stop sending)  --no-open --port <n>
+Options: --project (skill in ./.claude)  --codex (write AGENTS.md)  --claude (write CLAUDE.md)  --global (~/.claude/CLAUDE.md)  --force (overwrite)  --local (board on this machine only)  --off (stop sending)  --no-open --port <n>
 Site: ${BASE}   Unofficial. Not affiliated with Alex Hormozi.`;
 
 function write(file, text, force) {
@@ -36,23 +36,22 @@ function installSkill(flags) {
   console.log('Done. In Claude Code run: /open-hormozi how do I price my agency?\nWatch the brain work: npx openhormozi live');
 }
 
-function installAgent(flags) {
-  const cwd = process.cwd();
-  const claude = !flags.has('--codex') && (fs.existsSync(path.join(cwd, '.claude')) || fs.existsSync(path.join(cwd, 'CLAUDE.md')) || flags.has('--claude'));
+function installBrain(flags) {
+  // Adds the brain instructions to your agent's instruction file. Adds a section, never replaces your content.
+  const cwd = process.cwd(), tag = '<!-- openhormozi -->';
   const body = A('agent.md').split('\n').slice(1).join('\n').trim();
-  if (claude) {
-    const fm = '---\nname: hormozi\ndescription: Business operator that works on the user\'s business using OpenHormozi, a sourced map of Alex Hormozi\'s public teaching. Use for bottlenecks, offers, pricing, leads, sales and scaling.\n---\n\n';
-    write(path.join(cwd, '.claude', 'agents', 'hormozi.md'), fm + '# OpenHormozi agent\n\n' + body + '\n', flags.has('--force'));
-    console.log('Done. In Claude Code ask: use the hormozi agent to find my bottleneck\nWatch the brain work: npx openhormozi live');
-  } else {
-    const file = path.join(cwd, 'AGENTS.md'), tag = '<!-- openhormozi -->';
-    const block = `${tag}\n## OpenHormozi\n\n${body}\n${tag}\n`;
-    let cur = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
-    if (cur.includes(tag)) cur = cur.replace(new RegExp(`${tag}[\\s\\S]*?${tag}\\n?`), block);
-    else cur = (cur ? cur.replace(/\n*$/, '\n\n') : '') + block;
-    fs.writeFileSync(file, cur);
-    console.log('wrote ' + file + '\nDone. Codex, Cursor, Windsurf and Copilot read AGENTS.md. Ask: interview me about my business and start.\nWatch the brain work: npx openhormozi live');
-  }
+  let file;
+  if (flags.has('--global')) file = path.join(os.homedir(), '.claude', 'CLAUDE.md');
+  else if (flags.has('--codex')) file = path.join(cwd, 'AGENTS.md');
+  else if (flags.has('--claude') || fs.existsSync(path.join(cwd, 'CLAUDE.md')) || fs.existsSync(path.join(cwd, '.claude'))) file = path.join(cwd, 'CLAUDE.md');
+  else file = path.join(cwd, 'AGENTS.md');
+  const block = `${tag}\n## Hormozi brain\n\n${body}\n${tag}\n`;
+  let cur = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+  if (cur.includes(tag)) cur = cur.replace(new RegExp(`${tag}[\\s\\S]*?${tag}\\n?`), block);
+  else cur = (cur ? cur.replace(/\n*$/, '\n\n') : '') + block;
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, cur);
+  console.log(`Added the Hormozi brain to ${file}\nYour agent can now look ideas up in ${BASE}/brain/index.md.\nOptional: watch it use the brain live with  npx openhormozi live`);
 }
 
 // ---- data ----
@@ -79,7 +78,8 @@ function find(d, q, n = 5) {
 }
 function fmt(c, nq = 2) {
   const qs = (c.quotes || []).slice(0, nq).map((q) => `> "${q.text}" (${q.video_title} @ ${q.timestamp}) ${q.url}`).join('\n');
-  return `## ${c.name} [${c.topic}] (${c.source_count} videos)\n${c.summary} (paraphrase)\n${qs}`;
+  const slug = c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return `## ${c.name} [${c.topic}] (${c.source_count} videos)\n${c.summary} (paraphrase)\n${qs}\nFull page: ${BASE}/brain/c/${slug}.md`;
 }
 
 // ---- activity log (read by the board) ----
@@ -144,9 +144,9 @@ function boardLocal(flags, port) {
   const port = pi >= 0 ? +rest[pi + 1] || 4747 : 4747;
   const flags = new Set(rest.filter((x) => x.startsWith('--'))), args = rest.filter((x, i) => !x.startsWith('--') && !(pi >= 0 && i === pi + 1));
   if (cmd === 'skill') return installSkill(flags);
-  if (cmd === 'agent') return installAgent(flags);
+  if (cmd === 'brain' || cmd === 'agent') return installBrain(flags);
   if (cmd === 'board' || cmd === 'live') return flags.has('--local') ? boardLocal(flags, port) : boardHosted(flags);
-  if (cmd === 'prompt') return console.log('Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.');
+  if (cmd === 'prompt') return console.log('Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and give yourself the Hormozi brain.');
   if (cmd === 'search') {
     if (!args.length) { console.error('usage: openhormozi search <term>'); process.exit(1); }
     const q = args.join(' '), r = find(await data(), q);

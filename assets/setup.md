@@ -1,41 +1,38 @@
-# Set up a Hormozi business agent
+# Give yourself the Hormozi brain
 
-You are an AI assistant (Claude Code, Codex, Cursor, ChatGPT or similar). Your user wants an agent that runs their business using OpenHormozi, a sourced map of Alex Hormozi's public teaching. Follow these steps in order. Unofficial, not affiliated with Alex Hormozi.
+You are an AI agent or assistant (Claude Code, Codex, Cursor, OpenClaw, ChatGPT or similar). Your user wants you to have the Hormozi brain: a sourced knowledge base of Alex Hormozi's public teaching, one small Markdown page per idea. Add it to yourself, nothing more. Do not change how you work, do not set up tasks, and do not ask the user to hand over business details. What you do with it afterwards is up to your user.
 
-Source: https://github.com/zqxuii/OpenHormozi. The knowledge files are served from https://www.akshaymenon.qd.je.
+Unofficial, not affiliated with Alex Hormozi. You are not him.
 
-## 1. Read the brain
+Source: https://github.com/zqxuii/OpenHormozi. The brain is served from https://www.akshaymenon.qd.je.
 
-Fetch https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/site/agent.md and https://www.akshaymenon.qd.je/llms.txt. agent.md is the agent's operating instructions. llms.txt lists the knowledge files (topic Markdown files and concepts.json).
+## 1. Read it
 
-## 2. Work out where you are running
+Fetch https://www.akshaymenon.qd.je/brain/index.md and https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/site/agent.md. agent.md is the instruction block to keep. The index shows the wiki you will use.
 
-Pick the matching install. If unsure, ask the user in one line.
+## 2. Install it in the right place
 
-- Claude Code:
-  - Skill: save https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/site/skill/SKILL.md to `~/.claude/skills/open-hormozi/SKILL.md`.
-  - Agent: create `.claude/agents/hormozi.md` with frontmatter `name: hormozi`, a one-line `description`, then the full text of agent.md as the body.
-- Codex, Cursor, Windsurf, Copilot or anything that reads AGENTS.md: append the full text of agent.md to `AGENTS.md` in the project root under the heading `## OpenHormozi`. Create the file if missing.
-- A chat app with no file access (ChatGPT, Gemini web): tell the user to paste agent.md into a custom GPT or Project instructions, and give them the text.
-- A custom agent you are building: put agent.md in its system prompt and give it a fetch tool that can read the URLs above.
+Pick the match for where you run. If unsure, ask the user in one line.
 
-Say which files you are about to write, then write them. Never overwrite an existing file without showing the user the difference first.
+- **Claude Code:** save https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/site/skill/SKILL.md to `~/.claude/skills/open-hormozi/SKILL.md`, and add the full text of agent.md to the project's `CLAUDE.md` under the heading `## Hormozi brain`.
+- **Codex, Cursor, Windsurf, Copilot or anything that reads AGENTS.md:** add the full text of agent.md to `AGENTS.md` in the project root under `## Hormozi brain`. Create the file if missing.
+- **An agent with its own memory or knowledge settings** (OpenClaw, Hermes and similar): store agent.md in your persistent instructions or knowledge, and keep https://www.akshaymenon.qd.je/brain/index.md as a bookmark.
+- **A chat app with no file access:** tell the user to paste agent.md into the custom instructions, Project or GPT instructions, and give them the text.
+- **An agent you are building:** put agent.md in the system prompt and give it a tool that can fetch URLs.
 
-## 3. Create the business profile
+Say which file you are about to change, then change it. Never overwrite existing content without showing the user the difference first. Add a section, do not replace.
 
-Ask the user, in one message, for what you do not already know: what they sell and to whom, price, leads per month, close rate, monthly revenue, gross margin, cash on hand, team size, and what feels stuck. Save the answers to `hormozi-business.md` next to the agent file. The agent reads it at the start of every session and updates it when numbers change.
+## 3. Check it works
 
-## 4. Run the first diagnosis
+Look up one idea from the brain, for example Pricing at https://www.akshaymenon.qd.je/brain/c/pricing.md. Show the user one quote with its video link, so they can see it is real.
 
-Using the agent's loop: find the single constraint, read the matching topic file, pick one move for the next 7 days, quote the source with its video link, and draft the first piece of work (offer text, script or pricing table).
+## 4. Tell the user
 
-## 5. Show them the brain board
-
-If you have a shell, tell the user they can watch the agent use the brain live by running `npx openhormozi live`. For that to work, look ideas up with `npx -y openhormozi search "<keywords>"` and record what your advice used with `npx -y openhormozi use "Concept"`.
+Say what you added and where. Mention that they can watch you use the brain live, optionally, by running `npx openhormozi live` (it shows a private link where each idea lights up as you read it). Then stop and wait for their next request.
 
 ## Rules
 
-- Quotes in the files are his words; summaries are machine paraphrases. Keep attribution and links.
-- Captions are automatic. Tell the user to check the video for any figure that drives a decision.
+- Quotes are his words, summaries are paraphrases. Keep attribution and links.
+- Captions are automatic, so tell the user to check the video for any figure that matters.
+- Never claim to be Alex Hormozi.
 - Not financial, legal or tax advice.
-- Do not spend money, send messages or sign anything for the user without their clear yes.

@@ -4,28 +4,31 @@
 
 No sign-in or API key. Everything here is static files. Fetch them relative to this file's URL.
 
-## How to use
+## The brain wiki (start here)
 
-- Start with the topic file closest to the question. Each is plain Markdown, most-cited concepts first.
-- For lookups or filtering, load concepts.json: {meta, concepts:[{id, name, topic, type, source_count, summary, related, quotes:[{text, video_title, timestamp, url}]}]}.
-- When you use a quote, keep its attribution and video link.
+- [brain/index.md](https://www.akshaymenon.qd.je/brain/index.md): topics and the most-covered ideas
+- [brain/names.txt](https://www.akshaymenon.qd.je/brain/names.txt): one line per idea: name | topic | videos | page
+- brain/c/<idea-name>.md: one small page per idea (about 2 KB) with a summary, his exact words with video links, and related ideas
+- [agent.md](https://www.akshaymenon.qd.je/agent.md): instructions to add to your agent so it uses the brain well
+
+Open only the pages you need. When you use a quote, keep its attribution and video link.
 
 ## Accuracy
 
-- Summaries are machine-written paraphrases. Only text under `quotes` is his words.
+- Summaries are machine-written paraphrases. Only quoted text is his words.
 - Quotes were matched word for word against YouTube auto-captions, so numbers and names can be garbled. Check the timestamp before relying on one.
 
 ## Install
 
-- Paste into any AI assistant: `Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.`
+- Paste into any agent: `Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and give yourself the Hormozi brain.`
 - Claude Code plugin: `/plugin marketplace add zqxuii/OpenHormozi` then `/plugin install open-hormozi --marketplace zqxuii/OpenHormozi`
-- npx: `npx openhormozi skill`, `npx openhormozi agent`, `npx openhormozi live` (live brain board), `npx openhormozi search <term>`
-- Agent instructions only: https://www.akshaymenon.qd.je/agent.md
+- npx: `npx openhormozi skill`, `npx openhormozi brain`, `npx openhormozi live` (live brain board), `npx openhormozi search <term>`
 - Source: https://github.com/zqxuii/OpenHormozi
 
-## Data
+## Other formats
 
 - [concepts.json](concepts.json): all 1,434 concepts as JSON
+- Bigger topic files, one per area (below)
 
 ## Topics
 

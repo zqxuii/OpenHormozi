@@ -13,14 +13,14 @@ Base URL: https://www.akshaymenon.qd.je
 
 ## Steps
 
-1. Look up the concepts that fit the question. Run:
+1. Find the ideas that fit the question. Run:
    `npx -y openhormozi search "<2 to 4 keywords>"`
-   It prints matching concepts with a paraphrased summary and quotes with video links, and it shows up on the user's brain board. For a whole topic, run `npx -y openhormozi topic <name>` (offers, leads-marketing, sales, money-unit-economics, people-operations, mindset-self, scaling-strategy, wealth-investing).
-   If npx is not available, fetch https://www.akshaymenon.qd.je/topics/<name>.md or filter https://www.akshaymenon.qd.je/concepts.json with jq instead.
-2. Read the 2 to 4 concepts that fit the user's situation. Do not answer from memory and present it as his view.
+   It prints matching ideas with a paraphrased summary, quotes with video links, and the link to each idea's full page. It also shows up on the user's live brain board.
+   Without npx, grep https://www.akshaymenon.qd.je/brain/names.txt or open https://www.akshaymenon.qd.je/brain/index.md and pick a topic.
+2. Open the 2 to 4 best idea pages (https://www.akshaymenon.qd.je/brain/c/<idea-name>.md) and follow related links when the idea is part of a bigger framework. Do not answer from memory and present it as his view.
 3. Apply them to the user's situation. Ask one clarifying question only if you cannot give a useful answer without it.
-4. After you answer, record what you actually used so it lights up on the brain board:
-   `npx -y openhormozi use "Concept Name" "Other Concept"`
+4. After you answer, record what you used so it lights up on the board:
+   `npx -y openhormozi use "Idea Name" "Other Idea"`
 
 ## How to answer
 
