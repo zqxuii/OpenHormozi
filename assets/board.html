@@ -345,11 +345,12 @@ let since=0,feed=null,lastEv=Date.now(),lastUser=0;
 function ensure(){if(feed)return;const l=document.createElement('div');l.id='live';l.innerHTML='<div class="lh"><b>live</b> your agent is using the brain</div><div id="lf"></div>';document.body.appendChild(l);feed=l.querySelector('#lf');
  const t=document.getElementById('stats');if(t)t.textContent+='  live'}
 // zoom to each idea the agent touches, one after another
-const zq=[];let zrun=false;
+const zq=[];let zrun=false,lastAuto=null;
 async function zoomRun(){if(zrun)return;zrun=true;
- while(zq.length){const z=zq.shift();if(Date.now()-lastUser>6000)select(z.i);else fire(z.i,true);await sleep(z.use?3200:2400)}
+ while(zq.length){const z=zq.shift();if(Date.now()-lastUser>6000){select(z.i);lastAuto=z.i}else fire(z.i,true);await sleep(z.use?3200:2400)}
  await sleep(3500);
- if(!zq.length&&Date.now()-lastUser>6000&&sel!=null){deselect();ctl.autoRotate=true}
+ while(!zq.length&&Date.now()-lastUser<6000)await sleep(1000); // wait until the viewer stops touching the page
+ if(!zq.length&&lastAuto!=null){if(sel===lastAuto||sel==null){if(sel!=null)deselect();ctl.autoRotate=true;dock(false)}lastAuto=null}
  zrun=false;if(zq.length)zoomRun()}
 async function poll(){let ev;try{const r=await fetch(EP+since,{cache:'no-store'});if(!r.ok||!/json/.test(r.headers.get('content-type')||''))return false;ev=await r.json()}catch(e){return null}
  if(!Array.isArray(ev))return false;ensure();let changed=false;
