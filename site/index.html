@@ -54,12 +54,26 @@ blockquote a{display:block;font:11px/1.4 var(--mono);color:var(--mute);margin-to
 @media(max-width:760px){#top{flex-wrap:wrap;gap:8px 10px}.srch{order:3;flex-basis:100%;max-width:none;margin:0}.srch kbd{display:none}.zoom{margin-left:auto}
 #rail{top:calc(var(--st) + 98px);left:0;right:0;width:auto;background:var(--bg);border-bottom:1px solid var(--line);padding-block:6px;flex-direction:row;overflow-x:auto;padding:0 var(--gr) 0 var(--gl);gap:12px;scrollbar-width:none}.h,#leg button .ct{display:none}#leg{flex-direction:row;gap:12px}.acts{flex-direction:row;gap:12px;white-space:nowrap}
 #dock{top:auto;left:0;width:100%;height:52%;bottom:calc(var(--sb) + 32px);border-left:0;border-top:1px solid var(--accent);transform:translateY(110%)}#bar .note{display:none}}
+#inst{border:1px solid var(--accent);color:var(--accent);padding:0 12px;height:34px;font-size:12px;white-space:nowrap}#inst:hover{background:var(--accent);color:var(--bg)}
+#ov{position:absolute;inset:0;z-index:20;background:rgba(7,9,13,.82);display:none;align-items:center;justify-content:center;padding:calc(var(--st) + 16px) var(--gr) calc(var(--sb) + 16px) var(--gl);box-sizing:border-box}#ov.open{display:flex}
+#mod{width:min(680px,100%);max-height:100%;overflow:auto;background:var(--bg);border:1px solid var(--line);padding:18px 20px 20px;box-sizing:border-box}
+#mod h2{font-size:17px;margin:0 0 4px;letter-spacing:-.01em}#mod .lead{font:14px/1.5 var(--body);color:var(--mute);margin:0 0 14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.tabs button{border:1px solid var(--line);padding:7px 12px;font-size:12px}.tabs button[aria-selected=true]{border-color:var(--accent);color:var(--accent)}
+.pane{display:none}.pane.on{display:block}.pane p{font:14px/1.55 var(--body);margin:0 0 12px}
+.cmd{position:relative;border:1px solid var(--line);background:#0b0f14;padding:10px 64px 10px 12px;font-size:12px;line-height:1.5;word-break:break-all;margin:0 0 12px;user-select:all}
+.cmd button{position:absolute;right:6px;top:6px;border:1px solid var(--line);padding:3px 8px;font-size:11px;color:var(--mute);background:var(--bg)}.cmd button:hover{border-color:var(--accent);color:var(--accent)}
+.pane a{color:var(--accent)}#close{float:right;font-size:11px;color:var(--mute)}#close:hover{color:var(--accent)}
+@media(max-width:760px){#inst{height:34px}}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400&display=swap">
+<div id="ov" role="dialog" aria-modal="true" aria-labelledby="mt"><div id="mod"><button id="close" type="button">close [esc]</button><h2 id="mt">Install the Hormozi brain</h2><p class="lead">Pick one. No account, no key.</p>
+<div class="tabs" role="tablist"><button type="button" role="tab" data-p="prompt" aria-selected="true">1 paste a prompt</button><button type="button" role="tab" data-p="plugin" aria-selected="false">2 claude plugin</button><button type="button" role="tab" data-p="npx" aria-selected="false">3 npx</button><button type="button" role="tab" data-p="mcp" aria-selected="false">4 mcp</button><button type="button" role="tab" data-p="files" aria-selected="false">5 plain files</button></div>
+<div class="pane on" id="p-prompt"><p>Works in Claude, Codex, Cursor, ChatGPT, any assistant that can read a link. It installs the right files for where it is running, interviews you, and builds your business agent.</p><div class="cmd"><span>Read https://www.akshaymenon.qd.je/setup.md and follow it to set up a Hormozi business agent for me.</span><button type="button" data-copy>copy</button></div></div><div class="pane" id="p-plugin"><p>Claude Code marketplace. Adds the /open-hormozi skill and the hormozi agent.</p><div class="cmd"><span>/plugin marketplace add zqxuii/OpenHormozi</span><button type="button" data-copy>copy</button></div><div class="cmd"><span>/plugin install open-hormozi --marketplace zqxuii/OpenHormozi</span><button type="button" data-copy>copy</button></div></div><div class="pane" id="p-npx"><p>Installs from the terminal. Skill for Claude Code, or the agent for your project (writes .claude/agents or AGENTS.md).</p><div class="cmd"><span>npx openhormozi skill</span><button type="button" data-copy>copy</button></div><div class="cmd"><span>npx openhormozi agent</span><button type="button" data-copy>copy</button></div><p>Also: <b>npx openhormozi search "grand slam offer"</b></p></div><div class="pane" id="p-mcp"><p>For Claude Desktop, Cursor, Codex and any MCP client. Tools: search_concepts, get_topic, get_agent_instructions.</p><div class="cmd"><span>claude mcp add openhormozi -- npx -y openhormozi mcp</span><button type="button" data-copy>copy</button></div><p>Other clients, MCP config: <b>{"mcpServers":{"openhormozi":{"command":"npx","args":["-y","openhormozi","mcp"]}}}</b></p></div><div class="pane" id="p-files"><p>No install. Point any agent at the index. All files are open to other sites (CORS).</p><div class="cmd"><span>https://www.akshaymenon.qd.je/llms.txt</span><button type="button" data-copy>copy</button></div><p><a href="agent.md" target="_blank" rel="noopener">agent.md</a> · <a href="concepts.json" target="_blank" rel="noopener">concepts.json</a> · <a href="https://github.com/zqxuii/OpenHormozi" target="_blank" rel="noopener">github</a></p></div>
+<p class="tag" style="margin:6px 0 0">Unofficial. Not affiliated with Alex Hormozi. Not financial, legal or tax advice.</p></div></div>
 <div id="g"></div>
 <div id="labs"></div>
 <div id="tip"></div>
-<header id="top"><h1><i>░▒▓</i>OpenHormozi</h1><div class="sub" id="stats"></div><label class="srch"><span>/</span><input id="q" type="search" placeholder="search pricing, hiring, CLOSER" aria-label="Search concepts"><kbd>/</kbd></label><div class="zoom"><button id="zout" type="button" aria-label="Zoom out, pulls the brain apart">−</button><button id="zin" type="button" aria-label="Zoom in, puts the brain together">+</button></div></header>
+<header id="top"><h1><i>░▒▓</i>OpenHormozi</h1><div class="sub" id="stats"></div><label class="srch"><span>/</span><input id="q" type="search" placeholder="search pricing, hiring, CLOSER" aria-label="Search concepts"><kbd>/</kbd></label><button id="inst" type="button">install</button><div class="zoom"><button id="zout" type="button" aria-label="Zoom out, pulls the brain apart">−</button><button id="zin" type="button" aria-label="Zoom in, puts the brain together">+</button></div></header>
 <nav id="rail"><div><div class="h">topics</div><div id="leg"></div></div><div class="acts"><button id="fire" type="button">* fire a thought</button><button id="reset" type="button">~ reset view</button></div></nav>
 <footer id="bar"><span id="meter"></span><span class="hint"><b>scroll</b> explode / assemble</span><span class="hint"><b>drag</b> rotate</span><span class="hint"><b>click</b> open an idea</span><span class="sp"></span><a id="ag" href="llms.txt" target="_blank" rel="noopener">for agents: llms.txt</a><span class="note">Quotes checked against auto-captions. Unofficial, not affiliated with Alex Hormozi.</span></footer>
 <div id="dock"><button id="tog" type="button">close [esc]</button><aside id="side"></aside></div>
@@ -289,4 +303,16 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;stepTween();
 requestAnimationFrame(frame);
 // intro: fly in from deep space
 camera.position.set(520,240,600);fly(HOME_POS,HOME_TGT,3600);
+</script>
+<script>
+(function(){const ov=document.getElementById('ov');if(!ov)return;
+const open=()=>{ov.classList.add('open');history.replaceState(null,'','#install')},shut=()=>{ov.classList.remove('open');history.replaceState(null,'',location.pathname)};
+document.getElementById('inst').addEventListener('click',open);document.getElementById('close').addEventListener('click',shut);
+ov.addEventListener('click',e=>{if(e.target===ov)shut()});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&ov.classList.contains('open')){shut();e.stopPropagation()}},true);
+if(location.hash==='#install')open();
+ov.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{ov.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));ov.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+b.dataset.p))}));
+ov.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{const t=b.previousElementSibling.textContent;let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){const r=document.createRange();r.selectNodeContents(b.previousElementSibling);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+b.textContent=ok?'copied':'press ctrl+c';setTimeout(()=>b.textContent='copy',1600)}));
+addEventListener('keydown',e=>{if(ov.classList.contains('open'))e.stopPropagation()},true)})();
 </script>

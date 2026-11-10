@@ -1,0 +1,18 @@
+/llms.txt
+  Access-Control-Allow-Origin: *
+  Content-Type: text/plain; charset=utf-8
+/concepts.json
+  Access-Control-Allow-Origin: *
+  Content-Type: application/json; charset=utf-8
+/topics/*
+  Access-Control-Allow-Origin: *
+  Content-Type: text/markdown; charset=utf-8
+/agent.md
+  Access-Control-Allow-Origin: *
+  Content-Type: text/markdown; charset=utf-8
+/skill/*
+  Access-Control-Allow-Origin: *
+  Content-Type: text/markdown; charset=utf-8
+/setup.md
+  Access-Control-Allow-Origin: *
+  Content-Type: text/markdown; charset=utf-8

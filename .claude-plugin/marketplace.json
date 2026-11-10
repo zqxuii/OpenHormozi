@@ -1,0 +1,16 @@
+{
+  "name": "openhormozi",
+  "owner": {
+    "name": "OpenHormozi contributors"
+  },
+  "plugins": [
+    {
+      "name": "open-hormozi",
+      "source": "./plugins/open-hormozi",
+      "description": "Skill + agent: answer business questions and run your business from a sourced map of Alex Hormozi's public teaching. Unofficial."
+    }
+  ],
+  "metadata": {
+    "description": "OpenHormozi: a sourced map of Alex Hormozi's public teaching, as a Claude Code skill and agent. Unofficial."
+  }
+}

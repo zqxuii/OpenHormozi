@@ -15,6 +15,15 @@ No sign-in or API key. Everything here is static files. Fetch them relative to t
 - Summaries are machine-written paraphrases. Only text under `quotes` is his words.
 - Quotes were matched word for word against YouTube auto-captions, so numbers and names can be garbled. Check the timestamp before relying on one.
 
+## Install
+
+- Paste into any AI assistant: `Read https://www.akshaymenon.qd.je/setup.md and follow it to set up a Hormozi business agent for me.`
+- Claude Code plugin: `/plugin marketplace add zqxuii/OpenHormozi` then `/plugin install open-hormozi --marketplace zqxuii/OpenHormozi`
+- npx: `npx openhormozi skill`, `npx openhormozi agent`, `npx openhormozi search <term>`
+- MCP: `claude mcp add openhormozi -- npx -y openhormozi mcp`
+- Agent instructions only: https://www.akshaymenon.qd.je/agent.md
+- Source: https://github.com/zqxuii/OpenHormozi
+
 ## Data
 
 - [concepts.json](concepts.json): all 1,434 concepts as JSON

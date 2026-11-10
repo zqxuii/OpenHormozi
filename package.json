@@ -1,0 +1,13 @@
+{
+  "name": "openhormozi",
+  "version": "0.1.0",
+  "description": "Install the Hormozi brain as a skill, an agent or an MCP server. A sourced map of Alex Hormozi's public teaching. Unofficial.",
+  "bin": { "openhormozi": "bin/openhormozi.js" },
+  "files": ["bin", "assets", "README.md", "LICENSE"],
+  "scripts": { "prepack": "node scripts/sync-assets.js" },
+  "engines": { "node": ">=18" },
+  "keywords": ["hormozi", "claude", "skill", "agent", "mcp", "llms-txt", "business", "ai-agent"],
+  "homepage": "https://www.akshaymenon.qd.je",
+  "repository": { "type": "git", "url": "git+https://github.com/zqxuii/OpenHormozi.git" },
+  "license": "MIT"
+}

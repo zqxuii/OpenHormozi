@@ -1,0 +1,9 @@
+{
+  "name": "open-hormozi",
+  "description": "Answer business questions and run your business using OpenHormozi, a sourced map of Alex Hormozi's public teaching. Unofficial.",
+  "version": "0.1.0",
+  "author": { "name": "OpenHormozi contributors" },
+  "homepage": "https://www.akshaymenon.qd.je",
+  "repository": "https://github.com/zqxuii/OpenHormozi",
+  "license": "MIT"
+}
