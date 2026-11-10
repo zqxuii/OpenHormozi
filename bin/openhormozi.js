@@ -108,7 +108,12 @@ function board(flags, port) {
   srv.listen(port, '127.0.0.1', () => {
     const url = `http://localhost:${port}`;
     console.log(`Your brain board is live at ${url}\nWhen your agent looks something up or uses an idea, it lights up here. Ctrl+C to stop.`);
-    if (!flags.has('--no-open')) {
+    const remote = !!process.env.SSH_CONNECTION || (process.platform === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY);
+    if (remote) {
+      const host = (process.env.SSH_CONNECTION || '').split(' ')[2] || '<this-machine-address>';
+      console.log(`\nThis looks like a remote or headless machine, so no browser can open here.\nOn the computer with your browser, run:\n  ssh -L ${port}:localhost:${port} ${os.userInfo().username}@${host}\nthen open ${url} there.`);
+    }
+    if (!flags.has('--no-open') && !remote) {
       const [c, a] = process.platform === 'darwin' ? ['open', [url]] : process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : ['xdg-open', [url]];
       try { cp.spawn(c, a, { stdio: 'ignore', detached: true }).on('error', () => {}).unref(); } catch {}
     }

@@ -85,6 +85,8 @@ It opens the whole brain on your machine. While your AI works, the ideas it read
 <img src=".github/img/board.jpg" alt="The brain board with a live feed of the ideas an agent just used" width="760">
 </div>
 
+Running this on a server over SSH? Your browser can't reach the server's `localhost`. On your own computer run `ssh -L 4747:localhost:4747 user@your-server`, then open http://localhost:4747.
+
 Scroll to pull the brain apart into its eight regions, scroll back to put it together, click any idea to read the quotes behind it.
 
 <div align="center">
