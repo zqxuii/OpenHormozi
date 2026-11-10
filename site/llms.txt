@@ -19,7 +19,7 @@ No sign-in or API key. Everything here is static files. Fetch them relative to t
 
 - Paste into any AI assistant: `Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.`
 - Claude Code plugin: `/plugin marketplace add zqxuii/OpenHormozi` then `/plugin install open-hormozi --marketplace zqxuii/OpenHormozi`
-- npx: `npx openhormozi skill`, `npx openhormozi agent`, `npx openhormozi board` (live brain board), `npx openhormozi search <term>`
+- npx: `npx openhormozi skill`, `npx openhormozi agent`, `npx openhormozi live` (live brain board), `npx openhormozi search <term>`
 - Agent instructions only: https://www.akshaymenon.qd.je/agent.md
 - Source: https://github.com/zqxuii/OpenHormozi
 

@@ -12,7 +12,7 @@ const HELP = `openhormozi: the Hormozi brain for your AI
 
   npx openhormozi skill            install the /open-hormozi skill for Claude Code
   npx openhormozi agent            add the business agent to this project (Claude Code or AGENTS.md)
-  npx openhormozi board            get your private brain board link and watch your agent use the brain live
+  npx openhormozi live             get your private brain board link and watch your agent use the brain live
   npx openhormozi search <term>    look up concepts with quotes and video links
   npx openhormozi topic <name>     print a whole topic (${TOPICS.join(', ')})
   npx openhormozi use <concept>... record the concepts an answer used (lights up the board)
@@ -33,7 +33,7 @@ function write(file, text, force) {
 function installSkill(flags) {
   const dir = flags.has('--project') ? path.join(process.cwd(), '.claude') : path.join(os.homedir(), '.claude');
   write(path.join(dir, 'skills', 'open-hormozi', 'SKILL.md'), A('SKILL.md'), flags.has('--force'));
-  console.log('Done. In Claude Code run: /open-hormozi how do I price my agency?\nWatch the brain work: npx openhormozi board');
+  console.log('Done. In Claude Code run: /open-hormozi how do I price my agency?\nWatch the brain work: npx openhormozi live');
 }
 
 function installAgent(flags) {
@@ -43,7 +43,7 @@ function installAgent(flags) {
   if (claude) {
     const fm = '---\nname: hormozi\ndescription: Business operator that works on the user\'s business using OpenHormozi, a sourced map of Alex Hormozi\'s public teaching. Use for bottlenecks, offers, pricing, leads, sales and scaling.\n---\n\n';
     write(path.join(cwd, '.claude', 'agents', 'hormozi.md'), fm + '# OpenHormozi agent\n\n' + body + '\n', flags.has('--force'));
-    console.log('Done. In Claude Code ask: use the hormozi agent to find my bottleneck\nWatch the brain work: npx openhormozi board');
+    console.log('Done. In Claude Code ask: use the hormozi agent to find my bottleneck\nWatch the brain work: npx openhormozi live');
   } else {
     const file = path.join(cwd, 'AGENTS.md'), tag = '<!-- openhormozi -->';
     const block = `${tag}\n## OpenHormozi\n\n${body}\n${tag}\n`;
@@ -51,7 +51,7 @@ function installAgent(flags) {
     if (cur.includes(tag)) cur = cur.replace(new RegExp(`${tag}[\\s\\S]*?${tag}\\n?`), block);
     else cur = (cur ? cur.replace(/\n*$/, '\n\n') : '') + block;
     fs.writeFileSync(file, cur);
-    console.log('wrote ' + file + '\nDone. Codex, Cursor, Windsurf and Copilot read AGENTS.md. Ask: interview me about my business and start.\nWatch the brain work: npx openhormozi board');
+    console.log('wrote ' + file + '\nDone. Codex, Cursor, Windsurf and Copilot read AGENTS.md. Ask: interview me about my business and start.\nWatch the brain work: npx openhormozi live');
   }
 }
 
@@ -114,7 +114,7 @@ function boardHosted(flags) {
   let b = boardCfg();
   if (!b) { b = { id: crypto.randomBytes(8).toString('hex'), key: crypto.randomBytes(16).toString('hex') }; fs.mkdirSync(HOME, { recursive: true }); fs.writeFileSync(BOARD, JSON.stringify(b)); }
   const url = `${BASE}/b/${b.id}`;
-  console.log(`Your brain board:\n  ${url}\n\nKeep this link private. Whenever your agent looks something up or uses an idea, it lights up there.\nOnly the names of ideas are sent to ${new URL(BASE).host} to make that work. Never your questions or business details.\nStop sending: npx openhormozi board --off`);
+  console.log(`Your brain board:\n  ${url}\n\nKeep this link private. Whenever your agent looks something up or uses an idea, it lights up there.\nOnly the names of ideas are sent to ${new URL(BASE).host} to make that work. Never your questions or business details.\nStop sending: npx openhormozi live --off`);
   if (!flags.has('--no-open')) openBrowser(url);
 }
 
@@ -145,7 +145,7 @@ function boardLocal(flags, port) {
   const flags = new Set(rest.filter((x) => x.startsWith('--'))), args = rest.filter((x, i) => !x.startsWith('--') && !(pi >= 0 && i === pi + 1));
   if (cmd === 'skill') return installSkill(flags);
   if (cmd === 'agent') return installAgent(flags);
-  if (cmd === 'board') return flags.has('--local') ? boardLocal(flags, port) : boardHosted(flags);
+  if (cmd === 'board' || cmd === 'live') return flags.has('--local') ? boardLocal(flags, port) : boardHosted(flags);
   if (cmd === 'prompt') return console.log('Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.');
   if (cmd === 'search') {
     if (!args.length) { console.error('usage: openhormozi search <term>'); process.exit(1); }

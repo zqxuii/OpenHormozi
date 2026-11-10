@@ -31,7 +31,7 @@ Using the agent's loop: find the single constraint, read the matching topic file
 
 ## 5. Show them the brain board
 
-If you have a shell, tell the user they can watch the agent use the brain live by running `npx openhormozi board`. For that to work, look ideas up with `npx -y openhormozi search "<keywords>"` and record what your advice used with `npx -y openhormozi use "Concept"`.
+If you have a shell, tell the user they can watch the agent use the brain live by running `npx openhormozi live`. For that to work, look ideas up with `npx -y openhormozi search "<keywords>"` and record what your advice used with `npx -y openhormozi use "Concept"`.
 
 ## Rules
 

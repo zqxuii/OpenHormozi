@@ -23,7 +23,7 @@ If you have a shell, prefer the CLI, because it also lights up the user's brain 
 - `npx -y openhormozi search "<keywords>"` finds concepts with quotes and video links.
 - `npx -y openhormozi topic <name>` prints a whole topic.
 - `npx -y openhormozi use "Concept" "Concept"` records which concepts your advice actually used. Run it after each recommendation.
-- Tell the user once: "Watch the brain work: npx openhormozi board".
+- Tell the user once: "Watch the brain work: npx openhormozi live".
 
 Without a shell, fetch the URLs above with whatever fetch tool you have.
 

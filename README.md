@@ -52,7 +52,7 @@ You get a `/open-hormozi` command and a `hormozi` agent.
 ```bash
 npx openhormozi skill      # adds /open-hormozi to Claude Code
 npx openhormozi agent      # adds the business agent to this project
-npx openhormozi board      # opens your brain board
+npx openhormozi live      # opens your brain board
 ```
 
 `agent` writes `.claude/agents/hormozi.md` for Claude Code, or an `AGENTS.md` section for Codex, Cursor, Windsurf and Copilot.
@@ -76,7 +76,7 @@ Agent:  Your constraint is leads, not the offer. Move for the next 7 days: ...
 Every install comes with a brain board. Run:
 
 ```bash
-npx openhormozi board
+npx openhormozi live
 ```
 
 It gives you a private link on the OpenHormozi site (and opens it) that shows the whole brain. While your AI works, the camera flies to each idea it reads or uses, one after another, with the quotes behind it. A live feed shows what it touched. It works the same on a laptop, a server or a cloud box, because the link lives on the web and nothing runs on your machine.
