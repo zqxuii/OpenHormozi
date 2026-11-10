@@ -342,28 +342,33 @@ const EP=hm?`/api/board/${hm[1]}/activity?since=`:'__activity?since=';
 const TTL=60000,sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let since=0,feed=null,lastEv=Date.now(),lastUser=0;
 ['pointerdown','wheel','touchstart','keydown'].forEach(ev=>addEventListener(ev,()=>{lastUser=Date.now()},{passive:true,capture:true}));
-function ensure(){if(feed)return;const l=document.createElement('div');l.id='live';l.innerHTML='<div class="lh"><b>live</b> your agent is using the brain</div><div id="lf"></div>';document.body.appendChild(l);feed=l.querySelector('#lf');
+function ensure(){if(feed)return;const l=document.createElement('div');l.id='live';l.innerHTML='<div class="lh"><b>live</b> <span id="lst">waiting for your agent</span></div><div id="lf"></div>';document.body.appendChild(l);feed=l.querySelector('#lf');
  const t=document.getElementById('stats');if(t)t.textContent+='  live'}
 // zoom to each idea the agent touches, one after another
-const zq=[];let zrun=false,lastAuto=null;
+const zq=[];let zrun=false,lastAuto=null,phase='none'; // none | working | done | idle
+function status(){const el=document.getElementById('lst');if(!el)return;
+ if(phase==='working'&&Date.now()-lastEv>25000)phase='idle';
+ el.textContent=phase==='working'?'your agent is using the brain':phase==='done'?'answer ready':phase==='idle'?'idle, waiting for your agent':'waiting for your agent'}
+setInterval(status,500);
 async function zoomRun(){if(zrun)return;zrun=true;
- while(zq.length){const z=zq.shift();if(Date.now()-lastUser>6000){select(z.i);lastAuto=z.i}else fire(z.i,true);await sleep(z.use?3200:2400)}
- await sleep(3500);
+ while(zq.length){const z=zq.shift();if(Date.now()-lastUser>6000){select(z.i);lastAuto=z.i}else fire(z.i,true);await sleep(z.use?1500:1300)}
+ await sleep(800);
  while(!zq.length&&Date.now()-lastUser<6000)await sleep(1000); // wait until the viewer stops touching the page
  if(!zq.length&&lastAuto!=null){if(sel===lastAuto||sel==null){if(sel!=null)deselect();ctl.autoRotate=true;dock(false)}lastAuto=null}
+ if(!zq.length&&phase==='done')phase='idle';
  zrun=false;if(zq.length)zoomRun()}
 async function poll(){let ev;try{const r=await fetch(EP+since,{cache:'no-store'});if(!r.ok||!/json/.test(r.headers.get('content-type')||''))return false;ev=await r.json()}catch(e){return null}
  if(!Array.isArray(ev))return false;ensure();let changed=false;
- for(const e of ev){since=Math.max(since,e.t);lastEv=Date.now();const fresh=Date.now()-e.t<TTL;
+ for(const e of ev){since=Math.max(since,e.t);const fresh=Date.now()-e.t<TTL;if(fresh)lastEv=Date.now();
   const idxs=(e.concepts||[]).map(c=>byName.get(String(c).toLowerCase())).filter(i=>i!=null);
-  if(fresh&&idxs.length){idxs.forEach(i=>{LIT.set(i,e.t+TTL);changed=true;if(!zq.length||zq[zq.length-1].i!==i)zq.push({i,use:e.kind==='use'})})}
+  if(fresh)phase=e.kind==='use'?'done':'working';if(fresh&&idxs.length){if(e.kind==='use'){for(let k=zq.length-1;k>=0;k--)if(!zq[k].use)zq.splice(k,1)}idxs.slice(0,2).forEach(i=>{LIT.set(i,e.t+TTL);changed=true;if(!zq.length||zq[zq.length-1].i!==i)zq.push({i,use:e.kind==='use'})})}
   const row=document.createElement('div');row.className='row';
   row.innerHTML='<i>'+(e.kind==='use'?'used':'read')+'</i> '+esc((e.concepts||[]).join(', ')||'(topic)')+(e.q?'<span>'+esc(e.q)+'</span>':'');feed.prepend(row)}
  while(feed&&feed.children.length>40)feed.lastChild.remove();
  if(changed){style();zoomRun()}
  return true}
 (async()=>{const ok=await poll();if(!ok&&!hm)return;
- const tick=async()=>{if(!document.hidden)await poll();const idle=Date.now()-lastEv>120000;setTimeout(tick,hm?(idle?10000:3000):(idle?4000:1500))};setTimeout(tick,1500);
+ const tick=async()=>{if(!document.hidden)await poll();const idle=Date.now()-lastEv>120000;setTimeout(tick,phase==='working'?1200:hm?(idle?10000:2500):(idle?4000:1500))};setTimeout(tick,1500);
  setInterval(()=>{const n=Date.now();let c=false;LIT.forEach((v,k)=>{if(v<n){LIT.delete(k);c=true}});if(c)style()},3000)})();
 })();
 </script>
