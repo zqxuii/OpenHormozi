@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // OpenHormozi CLI. Zero dependencies. Unofficial, not affiliated with Alex Hormozi.
+const crypto = require('crypto');
 const fs = require('fs'), os = require('os'), path = require('path'), http = require('http'), cp = require('child_process');
 const BASE = process.env.OPENHORMOZI_URL || 'https://www.akshaymenon.qd.je';
 const HOME = process.env.OPENHORMOZI_HOME || path.join(os.homedir(), '.openhormozi');
@@ -12,12 +13,13 @@ const HELP = `openhormozi: the Hormozi brain for your AI
   npx openhormozi skill            install the /open-hormozi skill for Claude Code
   npx openhormozi agent            add the business agent to this project (Claude Code or AGENTS.md)
   npx openhormozi board            open your brain board and watch your agent use the brain live
+  npx openhormozi board --share    same, with a private link you can open from any device (for servers)
   npx openhormozi search <term>    look up concepts with quotes and video links
   npx openhormozi topic <name>     print a whole topic (${TOPICS.join(', ')})
   npx openhormozi use <concept>... record the concepts an answer used (lights up the board)
   npx openhormozi prompt           print the setup prompt for any AI assistant
 
-Options: --project (skill in ./.claude)  --codex (agent: write AGENTS.md)  --force (overwrite)  --port <n> --no-open (board)
+Options: --project (skill in ./.claude)  --codex (agent: write AGENTS.md)  --force (overwrite)  --port <n> --no-open --share (board)
 Site: ${BASE}   Unofficial. Not affiliated with Alex Hormozi.`;
 
 function write(file, text, force) {
@@ -95,8 +97,16 @@ function readLog(since) {
 
 function board(flags, port) {
   const html = A('board.html');
+  const share = flags.has('--share');
+  const token = crypto.randomBytes(12).toString('hex');
   const srv = http.createServer((req, res) => {
     const u = new URL(req.url, 'http://x');
+    if (share) {
+      const cookie = (req.headers.cookie || '').split(/;\s*/).find((c) => c.startsWith('ohk='));
+      const ok = u.searchParams.get('k') === token || (cookie && cookie.slice(4) === token);
+      if (!ok) { res.writeHead(401, { 'content-type': 'text/plain' }); return res.end('Open the full link printed by openhormozi board --share'); }
+      if (u.searchParams.get('k') === token) res.setHeader('set-cookie', `ohk=${token}; HttpOnly; SameSite=Lax; Path=/`);
+    }
     if (u.pathname === '/__activity') {
       res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
       return res.end(JSON.stringify(readLog(+u.searchParams.get('since') || 0)));
@@ -108,10 +118,23 @@ function board(flags, port) {
   srv.listen(port, '127.0.0.1', () => {
     const url = `http://localhost:${port}`;
     console.log(`Your brain board is live at ${url}\nWhen your agent looks something up or uses an idea, it lights up here. Ctrl+C to stop.`);
+    if (share) {
+      let tun;
+      try { tun = cp.spawn('cloudflared', ['tunnel', '--no-autoupdate', '--url', `http://127.0.0.1:${port}`], { stdio: ['ignore', 'ignore', 'pipe'] }); }
+      catch { tun = null; }
+      const fail = () => console.error('\n--share needs cloudflared (free, from Cloudflare). Install it from https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/ and run this again.');
+      if (!tun) return fail();
+      tun.on('error', fail);
+      let shown = false;
+      tun.stderr.on('data', (d) => { const m = !shown && /https:\/\/[a-z0-9-]+\.trycloudflare\.com/.exec(String(d)); if (m) { shown = true; console.log(`\nOpen this link on any device:\n  ${m[0]}/?k=${token}\nIt works only while this command runs, and only with the key in the link. Anyone you give the link to can see what your agent looks up. Ctrl+C to stop.`); } });
+      process.on('exit', () => { try { tun.kill(); } catch {} });
+      process.on('SIGINT', () => process.exit(0));
+      return;
+    }
     const remote = !!process.env.SSH_CONNECTION || (process.platform === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY);
     if (remote) {
       const host = (process.env.SSH_CONNECTION || '').split(' ')[2] || '<this-machine-address>';
-      console.log(`\nThis looks like a remote or headless machine, so no browser can open here.\nOn the computer with your browser, run:\n  ssh -L ${port}:localhost:${port} ${os.userInfo().username}@${host}\nthen open ${url} there.`);
+      console.log(`\nThis looks like a remote or headless machine, so no browser can open here.\nEasiest: stop this and run  npx openhormozi board --share  to get a private link you can open on any device.\nOr, on the computer with your browser, run:\n  ssh -L ${port}:localhost:${port} ${os.userInfo().username}@${host}\nthen open ${url} there.`);
     }
     if (!flags.has('--no-open') && !remote) {
       const [c, a] = process.platform === 'darwin' ? ['open', [url]] : process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : ['xdg-open', [url]];
