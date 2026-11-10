@@ -64,18 +64,23 @@ blockquote a{display:block;font:11px/1.4 var(--mono);color:var(--mute);margin-to
 .cmd button{position:absolute;right:6px;top:6px;border:1px solid var(--line);padding:3px 8px;font-size:11px;color:var(--mute);background:var(--bg)}.cmd button:hover{border-color:var(--accent);color:var(--accent)}
 .pane a{color:var(--accent)}#close{float:right;font-size:11px;color:var(--mute)}#close:hover{color:var(--accent)}
 @media(max-width:760px){#inst{height:34px}}
+#live{position:absolute;z-index:6;left:var(--gl);bottom:calc(var(--sb) + 44px);width:min(380px,calc(100% - 32px));max-height:34vh;overflow:auto;background:var(--panel);border:1px solid var(--accent);padding:10px 12px;box-sizing:border-box}
+#live .lh{font-size:11px;color:var(--mute);margin-bottom:6px}#live .lh b{color:var(--accent);font-weight:700}
+#live .row{font-size:12px;line-height:1.45;padding:3px 0;border-top:1px solid var(--line)}#live .row:first-of-type{border-top:0}#live .row i{font-style:normal;color:var(--accent)}#live .row span{color:var(--mute);font-size:11px;display:block}
+#stat{color:var(--mute);white-space:nowrap}#stat b{color:var(--fg);font-weight:400}
+@media(max-width:760px){#stat,#live{display:none}}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400&display=swap">
 <div id="ov" role="dialog" aria-modal="true" aria-labelledby="mt"><div id="mod"><button id="close" type="button">close [esc]</button><h2 id="mt">Install the Hormozi brain</h2><p class="lead">Pick one. No account, no key.</p>
-<div class="tabs" role="tablist"><button type="button" role="tab" data-p="prompt" aria-selected="true">1 paste a prompt</button><button type="button" role="tab" data-p="plugin" aria-selected="false">2 claude plugin</button><button type="button" role="tab" data-p="npx" aria-selected="false">3 npx</button><button type="button" role="tab" data-p="mcp" aria-selected="false">4 mcp</button><button type="button" role="tab" data-p="files" aria-selected="false">5 plain files</button></div>
-<div class="pane on" id="p-prompt"><p>Works in Claude, Codex, Cursor, ChatGPT, any assistant that can read a link. It installs the right files for where it is running, interviews you, and builds your business agent.</p><div class="cmd"><span>Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.</span><button type="button" data-copy>copy</button></div></div><div class="pane" id="p-plugin"><p>Claude Code marketplace. Adds the /open-hormozi skill and the hormozi agent.</p><div class="cmd"><span>/plugin marketplace add zqxuii/OpenHormozi</span><button type="button" data-copy>copy</button></div><div class="cmd"><span>/plugin install open-hormozi --marketplace zqxuii/OpenHormozi</span><button type="button" data-copy>copy</button></div></div><div class="pane" id="p-npx"><p>Installs from the terminal. Skill for Claude Code, or the agent for your project (writes .claude/agents or AGENTS.md).</p><div class="cmd"><span>npx openhormozi skill</span><button type="button" data-copy>copy</button></div><div class="cmd"><span>npx openhormozi agent</span><button type="button" data-copy>copy</button></div><p>Also: <b>npx openhormozi search "grand slam offer"</b></p></div><div class="pane" id="p-mcp"><p>For Claude Desktop, Cursor, Codex and any MCP client. Tools: search_concepts, get_topic, get_agent_instructions.</p><div class="cmd"><span>claude mcp add openhormozi -- npx -y openhormozi mcp</span><button type="button" data-copy>copy</button></div><p>Other clients, MCP config: <b>{"mcpServers":{"openhormozi":{"command":"npx","args":["-y","openhormozi","mcp"]}}}</b></p></div><div class="pane" id="p-files"><p>No install. Point any agent at the index. All files are open to other sites (CORS).</p><div class="cmd"><span>https://www.akshaymenon.qd.je/llms.txt</span><button type="button" data-copy>copy</button></div><p><a href="agent.md" target="_blank" rel="noopener">agent.md</a> · <a href="concepts.json" target="_blank" rel="noopener">concepts.json</a> · <a href="https://github.com/zqxuii/OpenHormozi" target="_blank" rel="noopener">github</a></p></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" data-p="prompt" aria-selected="true">1 paste a prompt</button><button type="button" role="tab" data-p="plugin" aria-selected="false">2 claude plugin</button><button type="button" role="tab" data-p="npx" aria-selected="false">3 npx</button><button type="button" role="tab" data-p="files" aria-selected="false">4 plain files</button></div>
+<div class="pane on" id="p-prompt"><p>Works in Claude, Codex, Cursor, ChatGPT, any assistant that can read a link. It installs the right files for where it is running, interviews you, and builds your business agent.</p><div class="cmd"><span>Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.</span><button type="button" data-copy>copy</button></div></div><div class="pane" id="p-plugin"><p>Claude Code marketplace. Adds the /open-hormozi skill and the hormozi agent.</p><div class="cmd"><span>/plugin marketplace add zqxuii/OpenHormozi</span><button type="button" data-copy>copy</button></div><div class="cmd"><span>/plugin install open-hormozi --marketplace zqxuii/OpenHormozi</span><button type="button" data-copy>copy</button></div></div><div class="pane" id="p-npx"><p>Installs from the terminal. Skill for Claude Code, or the agent for your project (writes .claude/agents or AGENTS.md). Then open your brain board and watch your agent use it live.</p><div class="cmd"><span>npx openhormozi skill</span><button type="button" data-copy>copy</button></div><div class="cmd"><span>npx openhormozi agent</span><button type="button" data-copy>copy</button></div><div class="cmd"><span>npx openhormozi board</span><button type="button" data-copy>copy</button></div><p>The board is this brain on your machine. Whenever your agent looks up or uses an idea, that part lights up.</p></div><div class="pane" id="p-files"><p>No install. Point any agent at the index. All files are open to other sites (CORS).</p><div class="cmd"><span>https://www.akshaymenon.qd.je/llms.txt</span><button type="button" data-copy>copy</button></div><p><a href="agent.md" target="_blank" rel="noopener">agent.md</a> · <a href="concepts.json" target="_blank" rel="noopener">concepts.json</a> · <a href="https://github.com/zqxuii/OpenHormozi" target="_blank" rel="noopener">github</a></p></div>
 <p class="tag" style="margin:6px 0 0">Unofficial. Not affiliated with Alex Hormozi. Not financial, legal or tax advice.</p></div></div>
 <div id="g"></div>
 <div id="labs"></div>
 <div id="tip"></div>
 <header id="top"><h1><i>░▒▓</i>OpenHormozi</h1><div class="sub" id="stats"></div><label class="srch"><span>/</span><input id="q" type="search" placeholder="search pricing, hiring, CLOSER" aria-label="Search concepts"><kbd>/</kbd></label><button id="inst" type="button">install</button><div class="zoom"><button id="zout" type="button" aria-label="Zoom out, pulls the brain apart">−</button><button id="zin" type="button" aria-label="Zoom in, puts the brain together">+</button></div></header>
 <nav id="rail"><div><div class="h">topics</div><div id="leg"></div></div><div class="acts"><button id="fire" type="button">* fire a thought</button><button id="reset" type="button">~ reset view</button></div></nav>
-<footer id="bar"><span id="meter"></span><span class="hint"><b>scroll</b> explode / assemble</span><span class="hint"><b>drag</b> rotate</span><span class="hint"><b>click</b> open an idea</span><span class="sp"></span><a id="ag" href="llms.txt" target="_blank" rel="noopener">for agents: llms.txt</a><span class="note">Quotes checked against auto-captions. Unofficial, not affiliated with Alex Hormozi.</span></footer>
+<footer id="bar"><span id="meter"></span><span class="hint"><b>scroll</b> explode / assemble</span><span class="hint"><b>drag</b> rotate</span><span class="hint"><b>click</b> open an idea</span><span class="sp"></span><span id="stat"></span><a id="ag" href="llms.txt" target="_blank" rel="noopener">for agents: llms.txt</a><span class="note">Quotes checked against auto-captions. Unofficial, not affiliated with Alex Hormozi.</span></footer>
 <div id="dock"><button id="tog" type="button">close [esc]</button><aside id="side"></aside></div>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -209,13 +214,13 @@ const NODES_TOTAL=nodes.length;const hidden=new Set();let sel=null,hov=null,quer
 document.getElementById('stats').textContent=`${D.stats.sources.toLocaleString()} sources  ${D.stats.concepts.toLocaleString()} concepts  ${NODES_TOTAL.toLocaleString()} mapped`;
 const leg=document.getElementById('leg');
 DOM.forEach((d,i)=>{const b=document.createElement('button'),ct=nodes.filter(n=>n.d===d).length;b.setAttribute('aria-pressed','true');b.innerHTML=`<span class="bx" style="color:${HEX[i]}">[x]</span><span class="n" style="color:${HEX[i]}">${esc(d)}</span><span class="ct">${ct}</span>`;b.onclick=()=>{hidden.has(d)?hidden.delete(d):hidden.add(d);b.setAttribute('aria-pressed',!hidden.has(d));b.querySelector('.bx').textContent=hidden.has(d)?'[ ]':'[x]';style()};leg.appendChild(b)});
-const matches=n=>!query||n.name.toLowerCase().includes(query);
+const matches=n=>!query||n.name.toLowerCase().includes(query);const LIT=new Map();
 function style(){const c=new THREE.Color();
  nodes.forEach((n,i)=>{const vis=!hidden.has(n.d),m=matches(n),rel=sel==null||i===sel||nb[n.id]?.has(nodes[sel]?.id)||(sel!=null&&nb[nodes[sel].id]?.has(n.id));
   const on=vis&&m&&rel;c.copy(COL[n.di]);
   let s=n.base,a=on?1:.0;if(vis&&!on)a=.1;
   if(i===sel){c.lerp(new THREE.Color('#ffffff'),.55);s*=1.9}else if(i===hov){c.lerp(new THREE.Color('#ffffff'),.7);s*=1.6}
-  nCol.set([c.r,c.g,c.b],i*3);nB[i]=vis?s:0;nAl[i]=a});
+  if(LIT.has(i)&&vis){c.lerp(new THREE.Color('#ffd27a'),.75);s*=1.8;a=1}nCol.set([c.r,c.g,c.b],i*3);nB[i]=vis?s:0;nAl[i]=a});
  const g=NODES.geometry;['col','size','alpha'].forEach(k=>g.attributes[k].needsUpdate=true);
  if(HL){scene.remove(HL);HL.geometry.dispose();HL=null}
  if(sel!=null){const sl=links.filter(l=>l.a===sel||l.b===sel);HL=new THREE.LineSegments(arcGeo(sl,1.0),linkMat(.4));HL.frustumCulled=false;scene.add(HL)}
@@ -315,4 +320,31 @@ ov.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{o
 ov.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{const t=b.previousElementSibling.textContent;let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){const r=document.createRange();r.selectNodeContents(b.previousElementSibling);const s=getSelection();s.removeAllRanges();s.addRange(r)}
 b.textContent=ok?'copied':'press ctrl+c';setTimeout(()=>b.textContent='copy',1600)}));
 addEventListener('keydown',e=>{if(ov.classList.contains('open'))e.stopPropagation()},true)})();
+</script>
+<script>
+(function(){
+const byName=new Map();nodes.forEach((n,i)=>byName.set(n.name.toLowerCase(),i));
+// ---- community stats (public site only; hidden when 0 or offline) ----
+const st=document.getElementById('stat');
+Promise.allSettled([fetch('https://api.npmjs.org/downloads/point/last-month/openhormozi').then(r=>r.json()),fetch('https://api.github.com/repos/zqxuii/OpenHormozi').then(r=>r.json())]).then(([a,b])=>{
+ const parts=[];const d=a.value&&a.value.downloads,s=b.value&&b.value.stargazers_count;
+ if(d>0)parts.push('<b>'+d.toLocaleString()+'</b> installs this month');if(s>0)parts.push('<b>'+s.toLocaleString()+'</b> stars');
+ if(parts.length&&st)st.innerHTML=parts.join(' · ')});
+// ---- live brain board (only when served by `npx openhormozi board`) ----
+const TTL=60000;let since=0,first=true,feed=null;
+function ensure(){if(feed)return;const l=document.createElement('div');l.id='live';l.innerHTML='<div class="lh"><b>live</b> your agent is using the brain</div><div id="lf"></div>';document.body.appendChild(l);feed=l.querySelector('#lf');
+ const t=document.getElementById('stats');if(t)t.textContent+='  live'}
+async function poll(){let ev;try{const r=await fetch('__activity?since='+since,{cache:'no-store'});if(!r.ok||!/json/.test(r.headers.get('content-type')||''))return false;ev=await r.json()}catch(e){return false}
+ if(Array.isArray(ev)){ensure();let changed=false;
+  for(const e of ev){since=Math.max(since,e.t);const fresh=Date.now()-e.t<TTL;
+   const idxs=(e.concepts||[]).map(c=>byName.get(String(c).toLowerCase())).filter(i=>i!=null);
+   if(fresh)idxs.forEach((i,k)=>{LIT.set(i,e.t+TTL);changed=true;setTimeout(()=>fire(i,e.kind==='use'),k*350)});
+   const row=document.createElement('div');row.className='row';
+   const names=(e.concepts||[]).join(', ')||'(topic)';
+   row.innerHTML='<i>'+(e.kind==='use'?'used':'read')+'</i> '+esc(names)+(e.q?'<span>'+esc(e.q)+'</span>':'');feed.prepend(row)}
+  while(feed.children.length>40)feed.lastChild.remove();
+  if(changed)style()}
+ return true}
+(async()=>{if(!(await poll()))return;setInterval(poll,1200);setInterval(()=>{const n=Date.now();let c=false;LIT.forEach((v,k)=>{if(v<n){LIT.delete(k);c=true}});if(c)style()},3000)})();
+})();
 </script>

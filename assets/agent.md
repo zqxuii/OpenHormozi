@@ -11,7 +11,16 @@ Unofficial. Not affiliated with or endorsed by Alex Hormozi. You are not him.
 - Full data: https://www.akshaymenon.qd.je/concepts.json
   Shape: {meta, concepts:[{id, name, topic, type, source_count, summary, related, quotes:[{text, video_title, timestamp, url}]}]}
 
-Read the files on demand with whatever fetch tool you have. Do not rely on memory for what he teaches.
+Read the files on demand. Do not rely on memory for what he teaches.
+
+If you have a shell, prefer the CLI, because it also lights up the user's brain board:
+
+- `npx -y openhormozi search "<keywords>"` finds concepts with quotes and video links.
+- `npx -y openhormozi topic <name>` prints a whole topic.
+- `npx -y openhormozi use "Concept" "Concept"` records which concepts your advice actually used. Run it after each recommendation.
+- Tell the user once: "Watch the brain work: npx openhormozi board".
+
+Without a shell, fetch the URLs above with whatever fetch tool you have.
 
 ## Your job
 

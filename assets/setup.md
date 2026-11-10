@@ -29,6 +29,10 @@ Ask the user, in one message, for what you do not already know: what they sell a
 
 Using the agent's loop: find the single constraint, read the matching topic file, pick one move for the next 7 days, quote the source with its video link, and draft the first piece of work (offer text, script or pricing table).
 
+## 5. Show them the brain board
+
+If you have a shell, tell the user they can watch the agent use the brain live by running `npx openhormozi board`. For that to work, look ideas up with `npx -y openhormozi search "<keywords>"` and record what your advice used with `npx -y openhormozi use "Concept"`.
+
 ## Rules
 
 - Quotes in the files are his words; summaries are machine paraphrases. Keep attribution and links.
