@@ -87,8 +87,6 @@ It gives you a private link on the OpenHormozi site (and opens it) that shows th
 <img src=".github/img/board.jpg" alt="The brain board with a live feed of the ideas an agent just used" width="760">
 </div>
 
-Running your agent on a server? Use `npx openhormozi board --share`. It prints a private link you can open on any device. The link works only while the command runs and only with the key in it. This needs the free [`cloudflared`](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) tool.
-
 Scroll to pull the brain apart into its eight regions, scroll back to put it together, click any idea to read the quotes behind it.
 
 <div align="center">
