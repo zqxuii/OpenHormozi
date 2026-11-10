@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
+<base href="/">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="An explorable ASCII map of the business concepts Alex Hormozi teaches, with verified quotes and timestamped video links. Unofficial.">
 <meta property="og:title" content="OpenHormozi">
@@ -167,7 +168,12 @@ function exOff(x,y,z,kind){if(kind===1)return [x*.28,(y+62)*.28-105,(z+78)*.28-1
  [1,-1].forEach(side=>part(new THREE.IcosahedronGeometry(1,17),v=>{const d=v.clone().normalize(),p=cortex(d.x,d.y,d.z,side);p.c=tintFor(d.x*side,d.y,d.z);return p}));
  const w=[COL[7].r,COL[7].g,COL[7].b];
  part(new THREE.IcosahedronGeometry(1,9),v=>{const d=v.clone().normalize(),p=cereb(d.x,d.y,d.z);p.c=w;return p},1);
- part(new THREE.CylinderGeometry(9,5.5,95,10,6,true),v=>{const t=(47.5-v.y)/95;return {x:v.x+6*t,y:-42-85*t,z:-30-32*t+v.z,f:.55,c:[.35,.45,.9]}},2);
+ const SK=[[0,9],[.12,7.4],[.3,10.4],[.42,12.8],[.56,10],[.7,7.2],[.85,5.4],[1,3.6]];
+ const sr=t=>{for(let i=1;i<SK.length;i++)if(t<=SK[i][0]){const a=SK[i-1],b=SK[i],k=(t-a[0])/(b[0]-a[0]),s=k*k*(3-2*k);return a[1]+(b[1]-a[1])*s}return SK[SK.length-1][1]};
+ part(new THREE.CylinderGeometry(1,1,95,30,36,true),v=>{const t=(47.5-v.y)/95,R=sr(t),ux=v.x,uz=v.z,pons=Math.exp(-Math.pow((t-.42)/.1,2)),mid=Math.exp(-Math.pow((t-.1)/.07,2)),
+  rx=R*1.25*(1.1+.08*mid),rz=R*1.25*(.84+(uz>0?.8*pons*uz:0)+(uz<0?.2*mid*-uz:0)),th=Math.atan2(uz,ux),
+  f=.62+.2*Math.sin(th*5+t*13)*(1-.5*pons)+.18*pons*Math.sin(th*2+1);
+  return {x:ux*rx,y:-42-85*t,z:-30-32*t+Math.sin(t*Math.PI)*-3+uz*rz,f,c:[.35,.45,.9]}},2);
  const g=new THREE.BufferGeometry(),set=(n,a,k)=>g.setAttribute(n,new THREE.BufferAttribute(new Float32Array(a),k));
  set('position',A.pos,3);set('cen',A.cen,3);set('off',A.off,3);set('exo',A.exo,3);set('rn',A.rn,1);set('tint',A.tint,3);set('fold',A.fold,1);g.computeBoundingSphere();
  BRAIN=new THREE.Mesh(g,new THREE.ShaderMaterial({uniforms:BU,side:THREE.DoubleSide,extensions:{derivatives:true},
@@ -330,21 +336,33 @@ Promise.allSettled([fetch('https://api.npmjs.org/downloads/point/last-month/open
  const parts=[];const d=a.value&&a.value.downloads,s=b.value&&b.value.stargazers_count;
  if(d>0)parts.push('<b>'+d.toLocaleString()+'</b> installs this month');if(s>0)parts.push('<b>'+s.toLocaleString()+'</b> stars');
  if(parts.length&&st)st.innerHTML=parts.join(' · ')});
-// ---- live brain board (only when served by `npx openhormozi board`) ----
-const TTL=60000;let since=0,first=true,feed=null;
+// ---- live brain board: hosted link (/b/<id>) or local (`npx openhormozi board --local`) ----
+const hm=location.pathname.match(/^\/b\/([a-f0-9]{16,64})\/?$/);
+const EP=hm?`/api/board/${hm[1]}/activity?since=`:'__activity?since=';
+const TTL=60000,sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let since=0,feed=null,lastEv=Date.now(),lastUser=0;
+['pointerdown','wheel','touchstart','keydown'].forEach(ev=>addEventListener(ev,()=>{lastUser=Date.now()},{passive:true,capture:true}));
 function ensure(){if(feed)return;const l=document.createElement('div');l.id='live';l.innerHTML='<div class="lh"><b>live</b> your agent is using the brain</div><div id="lf"></div>';document.body.appendChild(l);feed=l.querySelector('#lf');
  const t=document.getElementById('stats');if(t)t.textContent+='  live'}
-async function poll(){let ev;try{const r=await fetch('__activity?since='+since,{cache:'no-store'});if(!r.ok||!/json/.test(r.headers.get('content-type')||''))return false;ev=await r.json()}catch(e){return false}
- if(Array.isArray(ev)){ensure();let changed=false;
-  for(const e of ev){since=Math.max(since,e.t);const fresh=Date.now()-e.t<TTL;
-   const idxs=(e.concepts||[]).map(c=>byName.get(String(c).toLowerCase())).filter(i=>i!=null);
-   if(fresh)idxs.forEach((i,k)=>{LIT.set(i,e.t+TTL);changed=true;setTimeout(()=>fire(i,e.kind==='use'),k*350)});
-   const row=document.createElement('div');row.className='row';
-   const names=(e.concepts||[]).join(', ')||'(topic)';
-   row.innerHTML='<i>'+(e.kind==='use'?'used':'read')+'</i> '+esc(names)+(e.q?'<span>'+esc(e.q)+'</span>':'');feed.prepend(row)}
-  while(feed.children.length>40)feed.lastChild.remove();
-  if(changed)style()}
+// zoom to each idea the agent touches, one after another
+const zq=[];let zrun=false;
+async function zoomRun(){if(zrun)return;zrun=true;
+ while(zq.length){const z=zq.shift();if(Date.now()-lastUser>6000)select(z.i);else fire(z.i,true);await sleep(z.use?3200:2400)}
+ await sleep(3500);
+ if(!zq.length&&Date.now()-lastUser>6000&&sel!=null){deselect();ctl.autoRotate=true}
+ zrun=false;if(zq.length)zoomRun()}
+async function poll(){let ev;try{const r=await fetch(EP+since,{cache:'no-store'});if(!r.ok||!/json/.test(r.headers.get('content-type')||''))return false;ev=await r.json()}catch(e){return null}
+ if(!Array.isArray(ev))return false;ensure();let changed=false;
+ for(const e of ev){since=Math.max(since,e.t);lastEv=Date.now();const fresh=Date.now()-e.t<TTL;
+  const idxs=(e.concepts||[]).map(c=>byName.get(String(c).toLowerCase())).filter(i=>i!=null);
+  if(fresh&&idxs.length){idxs.forEach(i=>{LIT.set(i,e.t+TTL);changed=true;if(!zq.length||zq[zq.length-1].i!==i)zq.push({i,use:e.kind==='use'})})}
+  const row=document.createElement('div');row.className='row';
+  row.innerHTML='<i>'+(e.kind==='use'?'used':'read')+'</i> '+esc((e.concepts||[]).join(', ')||'(topic)')+(e.q?'<span>'+esc(e.q)+'</span>':'');feed.prepend(row)}
+ while(feed&&feed.children.length>40)feed.lastChild.remove();
+ if(changed){style();zoomRun()}
  return true}
-(async()=>{if(!(await poll()))return;setInterval(poll,1200);setInterval(()=>{const n=Date.now();let c=false;LIT.forEach((v,k)=>{if(v<n){LIT.delete(k);c=true}});if(c)style()},3000)})();
+(async()=>{const ok=await poll();if(!ok&&!hm)return;
+ const tick=async()=>{if(!document.hidden)await poll();const idle=Date.now()-lastEv>120000;setTimeout(tick,hm?(idle?10000:3000):(idle?4000:1500))};setTimeout(tick,1500);
+ setInterval(()=>{const n=Date.now();let c=false;LIT.forEach((v,k)=>{if(v<n){LIT.delete(k);c=true}});if(c)style()},3000)})();
 })();
 </script>

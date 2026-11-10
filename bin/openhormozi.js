@@ -12,14 +12,13 @@ const HELP = `openhormozi: the Hormozi brain for your AI
 
   npx openhormozi skill            install the /open-hormozi skill for Claude Code
   npx openhormozi agent            add the business agent to this project (Claude Code or AGENTS.md)
-  npx openhormozi board            open your brain board and watch your agent use the brain live
-  npx openhormozi board --share    same, with a private link you can open from any device (for servers)
+  npx openhormozi board            get your private brain board link and watch your agent use the brain live
   npx openhormozi search <term>    look up concepts with quotes and video links
   npx openhormozi topic <name>     print a whole topic (${TOPICS.join(', ')})
   npx openhormozi use <concept>... record the concepts an answer used (lights up the board)
   npx openhormozi prompt           print the setup prompt for any AI assistant
 
-Options: --project (skill in ./.claude)  --codex (agent: write AGENTS.md)  --force (overwrite)  --port <n> --no-open --share (board)
+Options: --project (skill in ./.claude)  --codex (agent: write AGENTS.md)  --force (overwrite)  --local (board on this machine only)  --off (stop sending)  --no-open --port <n>
 Site: ${BASE}   Unofficial. Not affiliated with Alex Hormozi.`;
 
 function write(file, text, force) {
@@ -84,29 +83,46 @@ function fmt(c, nq = 2) {
 }
 
 // ---- activity log (read by the board) ----
-function log(kind, q, concepts) {
+const BOARD = path.join(HOME, 'board.json');
+const boardCfg = () => { try { return JSON.parse(fs.readFileSync(BOARD, 'utf8')); } catch { return null; } };
+async function log(kind, q, concepts) {
   try {
     fs.mkdirSync(HOME, { recursive: true });
     fs.appendFileSync(LOG, JSON.stringify({ t: Date.now(), kind, q, concepts }) + '\n');
     if (fs.statSync(LOG).size > 512 * 1024) { const lines = fs.readFileSync(LOG, 'utf8').trim().split('\n'); fs.writeFileSync(LOG, lines.slice(-200).join('\n') + '\n'); }
   } catch {}
+  const b = boardCfg();
+  if (b && concepts && concepts.length && !process.env.OPENHORMOZI_NO_RELAY) { // only idea names are sent, never your search text
+    try {
+      await fetch(`${BASE}/api/board/${b.id}`, { method: 'POST', headers: { 'x-key': b.key, 'content-type': 'application/json' },
+        body: JSON.stringify({ kind, concepts: concepts.slice(0, 8) }), signal: AbortSignal.timeout(2000) });
+    } catch {}
+  }
 }
 function readLog(since) {
   try { return fs.readFileSync(LOG, 'utf8').trim().split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter((e) => e && e.t > since).slice(-60); } catch { return []; }
 }
 
-function board(flags, port) {
+function openBrowser(url) {
+  const [c, a] = process.platform === 'darwin' ? ['open', [url]] : process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : ['xdg-open', [url]];
+  try { cp.spawn(c, a, { stdio: 'ignore', detached: true }).on('error', () => {}).unref(); } catch {}
+}
+
+// Default: your own link on the OpenHormozi site. Needs nothing installed.
+function boardHosted(flags) {
+  if (flags.has('--off')) { try { fs.unlinkSync(BOARD); } catch {} return console.log('Brain board link removed. Your agent no longer sends anything.'); }
+  let b = boardCfg();
+  if (!b) { b = { id: crypto.randomBytes(8).toString('hex'), key: crypto.randomBytes(16).toString('hex') }; fs.mkdirSync(HOME, { recursive: true }); fs.writeFileSync(BOARD, JSON.stringify(b)); }
+  const url = `${BASE}/b/${b.id}`;
+  console.log(`Your brain board:\n  ${url}\n\nKeep this link private. Whenever your agent looks something up or uses an idea, it lights up there.\nOnly the names of ideas are sent to ${new URL(BASE).host} to make that work. Never your questions or business details.\nStop sending: npx openhormozi board --off`);
+  if (!flags.has('--no-open')) openBrowser(url);
+}
+
+// Offline alternative: runs on this machine only.
+function boardLocal(flags, port) {
   const html = A('board.html');
-  const share = flags.has('--share');
-  const token = crypto.randomBytes(12).toString('hex');
   const srv = http.createServer((req, res) => {
     const u = new URL(req.url, 'http://x');
-    if (share) {
-      const cookie = (req.headers.cookie || '').split(/;\s*/).find((c) => c.startsWith('ohk='));
-      const ok = u.searchParams.get('k') === token || (cookie && cookie.slice(4) === token);
-      if (!ok) { res.writeHead(401, { 'content-type': 'text/plain' }); return res.end('Open the full link printed by openhormozi board --share'); }
-      if (u.searchParams.get('k') === token) res.setHeader('set-cookie', `ohk=${token}; HttpOnly; SameSite=Lax; Path=/`);
-    }
     if (u.pathname === '/__activity') {
       res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });
       return res.end(JSON.stringify(readLog(+u.searchParams.get('since') || 0)));
@@ -117,29 +133,8 @@ function board(flags, port) {
   srv.on('error', (e) => { console.error(e.code === 'EADDRINUSE' ? `port ${port} is busy. Try --port ${port + 1}` : e.message); process.exit(1); });
   srv.listen(port, '127.0.0.1', () => {
     const url = `http://localhost:${port}`;
-    console.log(`Your brain board is live at ${url}\nWhen your agent looks something up or uses an idea, it lights up here. Ctrl+C to stop.`);
-    if (share) {
-      let tun;
-      try { tun = cp.spawn('cloudflared', ['tunnel', '--no-autoupdate', '--url', `http://127.0.0.1:${port}`], { stdio: ['ignore', 'ignore', 'pipe'] }); }
-      catch { tun = null; }
-      const fail = () => console.error('\n--share needs cloudflared (free, from Cloudflare). Install it from https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/ and run this again.');
-      if (!tun) return fail();
-      tun.on('error', fail);
-      let shown = false;
-      tun.stderr.on('data', (d) => { const m = !shown && /https:\/\/[a-z0-9-]+\.trycloudflare\.com/.exec(String(d)); if (m) { shown = true; console.log(`\nOpen this link on any device:\n  ${m[0]}/?k=${token}\nIt works only while this command runs, and only with the key in the link. Anyone you give the link to can see what your agent looks up. Ctrl+C to stop.`); } });
-      process.on('exit', () => { try { tun.kill(); } catch {} });
-      process.on('SIGINT', () => process.exit(0));
-      return;
-    }
-    const remote = !!process.env.SSH_CONNECTION || (process.platform === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY);
-    if (remote) {
-      const host = (process.env.SSH_CONNECTION || '').split(' ')[2] || '<this-machine-address>';
-      console.log(`\nThis looks like a remote or headless machine, so no browser can open here.\nEasiest: stop this and run  npx openhormozi board --share  to get a private link you can open on any device.\nOr, on the computer with your browser, run:\n  ssh -L ${port}:localhost:${port} ${os.userInfo().username}@${host}\nthen open ${url} there.`);
-    }
-    if (!flags.has('--no-open') && !remote) {
-      const [c, a] = process.platform === 'darwin' ? ['open', [url]] : process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : ['xdg-open', [url]];
-      try { cp.spawn(c, a, { stdio: 'ignore', detached: true }).on('error', () => {}).unref(); } catch {}
-    }
+    console.log(`Local brain board at ${url} (this machine only). Ctrl+C to stop.`);
+    if (!flags.has('--no-open')) openBrowser(url);
   });
 }
 
@@ -150,23 +145,23 @@ function board(flags, port) {
   const flags = new Set(rest.filter((x) => x.startsWith('--'))), args = rest.filter((x, i) => !x.startsWith('--') && !(pi >= 0 && i === pi + 1));
   if (cmd === 'skill') return installSkill(flags);
   if (cmd === 'agent') return installAgent(flags);
-  if (cmd === 'board') return board(flags, port);
+  if (cmd === 'board') return flags.has('--local') ? boardLocal(flags, port) : boardHosted(flags);
   if (cmd === 'prompt') return console.log('Read https://raw.githubusercontent.com/zqxuii/OpenHormozi/main/SETUP.md and follow it to set up a Hormozi business agent for me.');
   if (cmd === 'search') {
     if (!args.length) { console.error('usage: openhormozi search <term>'); process.exit(1); }
     const q = args.join(' '), r = find(await data(), q);
-    log('read', q, r.slice(0, 3).map((c) => c.name));
+    await log('read', q, r.slice(0, 3).map((c) => c.name));
     return console.log(r.length ? r.map((c) => fmt(c)).join('\n\n') : 'No match. Say so and label any answer as general advice.');
   }
   if (cmd === 'topic') {
     if (!TOPICS.includes(args[0])) { console.error('usage: openhormozi topic <' + TOPICS.join('|') + '>'); process.exit(1); }
     const r = await fetch(`${BASE}/topics/${args[0]}.md`); if (!r.ok) throw new Error('could not load topic');
-    log('read', 'topic: ' + args[0], []);
+    await log('read', 'topic: ' + args[0], []);
     return console.log(await r.text());
   }
   if (cmd === 'use') {
     if (!args.length) { console.error('usage: openhormozi use "Concept Name" ...'); process.exit(1); }
-    log('use', '', args); return console.log('logged: ' + args.join(', '));
+    await log('use', '', args); return console.log('logged: ' + args.join(', '));
   }
   console.log(HELP); process.exit(cmd && cmd !== 'help' && cmd !== '--help' ? 1 : 0);
 })().catch((e) => { console.error(e.message); process.exit(1); });

@@ -79,7 +79,9 @@ Every install comes with a brain board. Run:
 npx openhormozi board
 ```
 
-It opens the whole brain on your machine. While your AI works, the ideas it reads light up, and the ones it uses to answer get a golden pulse. You can see what it is drawing on, as it does.
+It gives you a private link on the OpenHormozi site (and opens it) that shows the whole brain. While your AI works, the camera flies to each idea it reads or uses, one after another, with the quotes behind it. A live feed shows what it touched. It works the same on a laptop, a server or a cloud box, because the link lives on the web and nothing runs on your machine.
+
+**What gets sent:** only the names of the ideas your agent looked up or used, to make your link show them. Never your questions, your business details or anything you type. Keep the link private, since anyone who has it can watch. Stop any time with `npx openhormozi board --off`. Want it fully offline? `npx openhormozi board --local` runs the board on your machine only.
 
 <div align="center">
 <img src=".github/img/board.jpg" alt="The brain board with a live feed of the ideas an agent just used" width="760">
@@ -118,6 +120,8 @@ Scroll to pull the brain apart into its eight regions, scroll back to put it tog
 
 **Is this financial or legal advice?** No. Get a qualified professional for anything that matters.
 
+**Is my board private?** It is unlisted and only people with your link can see it. Events are deleted after 7 days without activity, and only the last 100 are kept.
+
 **Where does the data live?** As plain files at [akshaymenon.qd.je](https://www.akshaymenon.qd.je): [`llms.txt`](https://www.akshaymenon.qd.je/llms.txt), [`concepts.json`](https://www.akshaymenon.qd.je/concepts.json) and one Markdown file per topic. Any agent can read them.
 
 <details>
@@ -128,7 +132,7 @@ Scroll to pull the brain apart into its eight regions, scroll back to put it tog
 - `site/`: the public website and agent files (deployed to Cloudflare Pages). `site/skill/SKILL.md` and `site/agent.md` are the source of truth. `SETUP.md` is the paste-a-prompt guide.
 - `bin/openhormozi.js`: the zero-dependency command line tool. `npm run prepack` copies the site files into `assets/`.
 - `.claude-plugin/` and `plugins/open-hormozi/`: the Claude Code marketplace and plugin.
-- The brain board reads `~/.openhormozi/activity.jsonl`, which `search`, `topic` and `use` write to.
+- `search`, `topic` and `use` write to `~/.openhormozi/activity.jsonl`. If you ran `board`, they also send idea names to the relay (`site/_worker.js`, a Cloudflare Pages worker with a D1 database) that powers your `/b/<id>` link. `board --local` reads the file directly instead.
 
 ### Build your own graph
 
